@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rezept Sharing Frontend</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Rezept Sharing</h1>
+    <p class="hint">Einfaches Test-Frontend fuer die API.</p>
+
+    <section class="card">
+      <h2>1) Registrierung</h2>
+      <form id="register-form">
+        <input id="register-username" type="text" placeholder="Benutzername" required />
+        <input id="register-email" type="email" placeholder="E-Mail" required />
+        <input id="register-password" type="password" placeholder="Passwort" required />
+        <button type="submit">Registrieren</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>2) Anmeldung</h2>
+      <form id="login-form">
+        <input id="login-email" type="email" placeholder="E-Mail" required />
+        <input id="login-password" type="password" placeholder="Passwort" required />
+        <button type="submit">Anmelden</button>
+      </form>
+      <p id="auth-state">Nicht eingeloggt</p>
+    </section>
+
+    <section class="card">
+      <h2>3) Rezept erstellen</h2>
+      <form id="recipe-form">
+        <input id="recipe-title" type="text" placeholder="Titel" required />
+        <textarea id="recipe-ingredients" placeholder="Zutaten (z. B. Eier, Salz)" required></textarea>
+        <textarea id="recipe-steps" placeholder="Zubereitung" required></textarea>
+        <button type="submit">Speichern</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Rezepte</h2>
+      <button id="reload-btn" type="button">Neu laden</button>
+      <ul id="recipes-list"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Log</h2>
+      <pre id="output"></pre>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

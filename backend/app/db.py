@@ -1,7 +1,17 @@
+"""
+Datenbank-Modul fuer die Rezept Sharing Plattform.
+
+Verwendet SQLite mit:
+- Verbindungs-Management (get_db, close_db)
+- Automatische Tabellen-Erstellung
+- Foreign Key Support
+"""
+
 import sqlite3
 
 from flask import current_app, g
 
+# SQL-Schema fuer alle Tabellen
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,27 +55,55 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 
 def get_db():
+    """
+    Gibt die aktuelle Datenbankverbindung zurueck.
+    
+    Erstellt eine neue Verbindung, falls noch keine existiert.
+    Aktiviert Foreign Keys und Row-Factory fuer Dictionary-Zugriff.
+    
+    Returns:
+        sqlite3.Connection: Die Datenbankverbindung
+    """
     if "db" not in g:
         connection = sqlite3.connect(current_app.config["DATABASE"])
-        connection.row_factory = sqlite3.Row
-        connection.execute("PRAGMA foreign_keys = ON")
+        connection.row_factory = sqlite3.Row  # Dictionary-Zugriff ermoeglichen
+        connection.execute("PRAGMA foreign_keys = ON")  # Foreign Keys aktivieren
         g.db = connection
     return g.db
 
 
 def close_db(_error=None):
+    """
+    Schliesst die Datenbankverbindung.
+    
+    Wird automatisch am Ende eines Requests aufgerufen.
+    """
     db = g.pop("db", None)
     if db is not None:
         db.close()
 
 
 def init_db():
+    """
+    Initialisiert die Datenbank mit dem Schema.
+    
+    Erstellt alle Tabellen, falls sie nicht existieren.
+    """
     db = get_db()
     db.executescript(SCHEMA_SQL)
     db.commit()
 
 
 def init_app(app):
+    """
+    Registriert Datenbank-Funktionen bei der Flask-App.
+    
+    Args:
+        app: Die Flask-Anwendung
+    """
+    # Datenbankverbindung am Ende jedes Requests schliessen
     app.teardown_appcontext(close_db)
+    
+    # Tabellen erstellen
     with app.app_context():
         init_db()

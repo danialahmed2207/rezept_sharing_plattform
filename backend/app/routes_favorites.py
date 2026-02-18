@@ -37,6 +37,16 @@ def add_favorite(recipe_id):
 @token_required
 def remove_favorite(recipe_id):
     db = get_db()
+    
+    # Pruefen ob Favorit existiert
+    existing = db.execute(
+        "SELECT id FROM favorites WHERE user_id = ? AND recipe_id = ?",
+        (g.current_user["id"], recipe_id),
+    ).fetchone()
+    
+    if not existing:
+        return jsonify({"error": "Favorit nicht gefunden"}), 404
+    
     db.execute(
         "DELETE FROM favorites WHERE user_id = ? AND recipe_id = ?",
         (g.current_user["id"], recipe_id),

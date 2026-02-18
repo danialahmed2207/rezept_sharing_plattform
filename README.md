@@ -1,73 +1,62 @@
-# Rezept Sharing Plattform (Projektphase)
+# Rezept Sharing Plattform
 
-Dieses Projekt ist fuer eine 2-woechige Backend-Teamphase aufgebaut.
-Es erfuellt die Pflichtpunkte:
+Eine einfache Backend-API fuer eine Rezept-Sharing-Plattform.
+Erstellt im Rahmen einer zweiwöchigen Agile-Simulation.
 
-- Datenbankanbindung (SQLite)
-- CRUD-Operationen
-- Login-System (JWT-Token)
-- Python-Skript zur API-Interaktion
-- Saubere Projektstruktur mit Frontend/Backend-Trennung
+## Technologien
+
+- **Backend:** Flask (Python)
+- **Datenbank:** SQLite
+- **Authentifizierung:** JWT-Token
 
 ## Projektstruktur
 
-```txt
+```
 rezept_sharing_plattform/
-|- frontend/
-|  |- index.html
-|  |- script.js
-|  |- style.css
-|  |- requirements.txt
-|- backend/
-|  |- app/
-|  |  |- __init__.py
-|  |  |- db.py
-|  |  |- security.py
-|  |  |- routes_auth.py
-|  |  |- routes_recipes.py
-|  |  |- routes_comments.py
-|  |  |- routes_favorites.py
-|  |- scripts/
-|  |  |- api_client.py
-|  |- tests/
-|  |  |- test_api.py
-|  |- run.py
-|  |- requirements.txt
-|  |- .env.example
-|- ANLEITUNG_WIE_WIR_VORGEHEN.md
-|- PROJECT_CHECKLIST.md
-|- README.md
-|- .gitignore
+├── backend/
+│   ├── app/                    # Flask Anwendung
+│   │   ├── __init__.py         # App-Factory
+│   │   ├── db.py               # Datenbank
+│   │   ├── security.py         # JWT & Passwort-Hashing
+│   │   ├── routes_auth.py      # Login/Register
+│   │   ├── routes_recipes.py   # Rezepte CRUD
+│   │   ├── routes_comments.py  # Kommentare
+│   │   └── routes_favorites.py # Favoriten
+│   ├── scripts/
+│   │   └── api_client.py       # Python Demo-Skript
+│   ├── tests/
+│   │   └── test_api.py         # API Tests
+│   ├── .env.example            # Umgebungsvariablen Vorlage
+│   ├── .gitignore              # Git Ignore
+│   ├── requirements.txt        # Python Abhängigkeiten
+│   └── run.py                  # Start-Skript
+└── README.md                   # Diese Datei
 ```
 
-## Team-Setup (einmalig)
+## Einrichtung
 
-1. Repository klonen:
+### 1. Repository klonen
 
 ```bash
 git clone <URL>
-cd rezept_sharing_plattform
+cd rezept_sharing_plattform/backend
 ```
 
-2. Frontend-Umgebung einrichten:
+### 2. Virtuelle Umgebung erstellen
 
 ```bash
-cd frontend
 python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
+source venv/bin/activate  # macOS/Linux
+# oder: venv\Scripts\activate  # Windows
 ```
 
-3. Backend-Umgebung einrichten:
+### 3. Abhängigkeiten installieren
 
 ```bash
-cd ../backend
-python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-4. Lokale Umgebungsdatei anlegen:
+### 4. Umgebungsvariablen einrichten
 
 ```bash
 cp .env.example .env
@@ -76,106 +65,130 @@ cp .env.example .env
 ## Backend starten
 
 ```bash
-cd backend
-source venv/bin/activate
-python3 run.py
+python run.py
 ```
 
-Backend laeuft dann auf `http://127.0.0.1:5000`.
+Die API läuft auf: `http://127.0.0.1:5000`
 
-## Frontend starten (statisch)
+Health-Check: `GET http://127.0.0.1:5000/api/health`
 
-```bash
-cd frontend
-python3 -m http.server 5500
-```
-
-Frontend: `http://127.0.0.1:5500`
-
-## API-Uebersicht
+## API Übersicht
 
 ### Authentifizierung
 
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/auth/me` (mit Token)
+| Methode | Endpoint | Beschreibung | Auth |
+|---------|----------|--------------|------|
+| POST | `/api/auth/register` | Benutzer registrieren | Nein |
+| POST | `/api/auth/login` | Benutzer anmelden | Nein |
+| GET | `/api/auth/me` | Aktueller Benutzer | Ja |
 
 ### Rezepte
 
-- `GET /api/recipes`
-- `GET /api/recipes/<id>`
-- `POST /api/recipes` (mit Token)
-- `PUT /api/recipes/<id>` (mit Token, nur Besitzer)
-- `DELETE /api/recipes/<id>` (mit Token, nur Besitzer)
+| Methode | Endpoint | Beschreibung | Auth |
+|---------|----------|--------------|------|
+| GET | `/api/recipes` | Alle Rezepte anzeigen | Nein |
+| GET | `/api/recipes/<id>` | Einzelnes Rezept anzeigen | Nein |
+| POST | `/api/recipes` | Rezept erstellen | Ja |
+| PUT | `/api/recipes/<id>` | Rezept aktualisieren | Ja (Owner) |
+| DELETE | `/api/recipes/<id>` | Rezept löschen | Ja (Owner) |
 
 ### Kommentare
 
-- `GET /api/recipes/<id>/comments`
-- `POST /api/recipes/<id>/comments` (mit Token)
-- `PUT /api/comments/<id>` (mit Token, nur Besitzer)
-- `DELETE /api/comments/<id>` (mit Token, nur Besitzer)
+| Methode | Endpoint | Beschreibung | Auth |
+|---------|----------|--------------|------|
+| GET | `/api/recipes/<id>/comments` | Kommentare zu Rezept | Nein |
+| POST | `/api/recipes/<id>/comments` | Kommentar erstellen | Ja |
+| PUT | `/api/comments/<id>` | Kommentar bearbeiten | Ja (Owner) |
+| DELETE | `/api/comments/<id>` | Kommentar löschen | Ja (Owner) |
 
 ### Favoriten
 
-- `POST /api/recipes/<id>/favorite` (mit Token)
-- `DELETE /api/recipes/<id>/favorite` (mit Token)
-- `GET /api/favorites` (mit Token)
+| Methode | Endpoint | Beschreibung | Auth |
+|---------|----------|--------------|------|
+| GET | `/api/favorites` | Eigene Favoriten | Ja |
+| POST | `/api/recipes/<id>/favorite` | Zu Favoriten hinzufügen | Ja |
+| DELETE | `/api/recipes/<id>/favorite` | Aus Favoriten entfernen | Ja |
 
-## Python-Client-Skript
+## API Beispiele
 
-Das Skript fuehrt einen kompletten Demo-Ablauf aus:
-Registrierung -> Anmeldung -> Rezept erstellen -> Kommentar -> Favorit.
+### Registrierung
+
+```bash
+curl -X POST http://127.0.0.1:5000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"max","email":"max@example.com","password":"passwort123"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://127.0.0.1:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"max@example.com","password":"passwort123"}'
+```
+
+### Rezept erstellen (mit Token)
+
+```bash
+curl -X POST http://127.0.0.1:5000/api/recipes \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <DEIN_TOKEN>" \
+  -d '{"title":"Pasta","ingredients":"Nudeln, Sauce","steps":"Kochen, mischen"}'
+```
+
+## Python API Client
+
+Das Demo-Skript zeigt alle API-Funktionen:
 
 ```bash
 cd backend
-source venv/bin/activate
-python3 scripts/api_client.py
+python scripts/api_client.py
 ```
 
-## Tests ausfuehren
+## Tests ausführen
 
 ```bash
 cd backend
-source venv/bin/activate
-python3 -m unittest discover -s tests -v
+python -m unittest discover -s tests -v
 ```
 
-## Taegliche Dokumentation (Vorlage)
+## Tägliche Dokumentation
 
-Tragt hier pro Teammitglied taeglich eure Arbeit ein.
+| Datum | Teammitglied | Was wurde gemacht? | Commit |
+|-------|--------------|-------------------|--------|
+| 2025-02-18 | Name | Projekt-Setup bereinigt | `chore: projektstruktur vereinfacht` |
 
-| Datum | Teammitglied | Was wurde gemacht? | Commit-Link |
-|---|---|---|---|
-| YYYY-MM-DD | Name | Beispiel: Login-Endpunkt umgesetzt | URL |
-| YYYY-MM-DD | Name | Beispiel: CRUD fuer Rezepte abgeschlossen | URL |
+## Git Workflow
 
-## Sprint-Plan (einfach)
+```bash
+# 1. Aktuellen Stand holen
+git checkout main
+git pull origin main
 
-### Sprint 1
+# 2. Neuen Branch erstellen
+git checkout -b feature/beschreibung
 
-- Datenmodell finalisieren
-- Auth (Registrierung/Anmeldung)
-- CRUD fuer Rezepte
-- README-Grundstruktur
+# 3. Änderungen machen...
 
-### Sprint 2
+# 4. Committen
+git add .
+git commit -m "feat: beschreibung"
 
-- Kommentare + Favoriten
-- Python-API-Client
-- Tests + Fehlerbehebung
-- Demo + Abschlusspraesentation
+# 5. Hochladen
+git push -u origin feature/beschreibung
+```
 
-## Git-Workflow (empfohlen)
+## Commit Message Konventionen
 
-- Taeglich mindestens 1 Commit pro Person
-- Branch-Namen: `feature/...`, `fix/...`, `docs/...`, `test/...`
-- Commit-Praefixe:
-  - `feat:` fuer neue Funktionen
-  - `fix:` fuer Fehlerbehebungen
-  - `docs:` fuer Dokumentation
-  - `test:` fuer Tests
+- `feat:` - Neue Funktion
+- `fix:` - Fehlerbehebung
+- `docs:` - Dokumentation
+- `test:` - Tests
+- `chore:` - Wartung/Setup
 
-## Wichtiger Hinweis fuer euer Team
+## Sprint Ziele
 
-Eine ausfuehrliche Schritt-fuer-Schritt-Anleitung fuer Einsteiger liegt in der separaten Datei:
-`ANLEITUNG_WIE_WIR_VORGEHEN.md`
+- [x] Projekt-Setup
+- [ ] API vollständig testen
+- [ ] README vervollständigen
+- [ ] Demo vorbereiten

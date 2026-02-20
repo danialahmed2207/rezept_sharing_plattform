@@ -144,6 +144,22 @@ def create_recipe():
         'id': cursor.lastrowid
     }), 201
 
+# Rezept aktualisieren
+@app.route('/recipes/<int:id>', methods=['PUT'])
+def update_recipe(id):
+    data = request.get_json()
+    title = data.get('title')
+    ingredients = data.get('ingredients')
+    steps = data.get('steps')
+    
+    db = get_db()
+    db.execute(
+        'UPDATE recipes SET title=?, ingredients=?, steps=? WHERE id=?',
+        (title, ingredients, steps, id)
+    )
+    db.commit()
+    return jsonify({'message': 'Rezept aktualisiert'})
+
 # Rezept löschen
 @app.route('/recipes/<int:id>', methods=['DELETE'])
 def delete_recipe(id):

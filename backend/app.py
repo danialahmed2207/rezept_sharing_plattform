@@ -152,7 +152,12 @@ def update_recipe(id):
     ingredients = data.get('ingredients')
     steps = data.get('steps')
     
+    # Prüfen ob Rezept existiert
     db = get_db()
+    recipe = db.execute('SELECT * FROM recipes WHERE id = ?', (id,)).fetchone()
+    if not recipe:
+        return jsonify({'error': 'Rezept nicht gefunden'}), 404
+    
     db.execute(
         'UPDATE recipes SET title=?, ingredients=?, steps=? WHERE id=?',
         (title, ingredients, steps, id)

@@ -49,5 +49,5 @@ curl -X POST http://localhost:5000/recipes \
 ## Team
 
 - Danial - API erstellt
-- Meikel - 
+- Meikel - Tests gemacht
 - Daniel -
